@@ -28,4 +28,4 @@ runs:
       run: |
         # Extract repository_name from the owner/repository_name
         GITHUB_REPOSITORY_NAME=$(echo ${{ github.repository }} | cut -d '/' -f 2)
-        ${{ github.action_path }}/rsync-docs.sh  "${{ github.event.inputs.docs-username }}@${{ github.event.inputs.docs-host }}" "/opt/www/domains/spring.io/docs/htdocs/$GITHUB_REPOSITORY_NAME/reference/" "${{ github.event.inputs.docs-ssh-key }}" "${{ github.event.inputs.docs-ssh-host-key }}" "${{ github.event.inputs.dry-run }}"
+        ${{ github.action_path }}/rsync-docs.sh  "${{ inputs.docs-username }}@${{ inputs.docs-host }}" "/opt/www/domains/spring.io/docs/htdocs/$GITHUB_REPOSITORY_NAME/reference/" "${{ inputs.docs-ssh-key }}" "${{ inputs.docs-ssh-host-key }}" "${{ inputs.dry-run }}"
