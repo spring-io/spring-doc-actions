@@ -10,7 +10,7 @@ It deploys to the docs server using the GitHub repository in the path.
 
 [source,yml]
 ----
-secrets:
+inputs:
   docs-username:
     description: The username to connect to the docs server
     required: true
@@ -23,7 +23,6 @@ secrets:
   docs-ssh-host-key:
     description: The docs ssh host key used to connect to docs-host
     required: true
-inputs:
   dry-run:
     description: Set to false if should perform the sync, else a dry run is performed
     default: false
