@@ -1,7 +1,7 @@
 #!/bin/bash
 
-HOST="$1"
-HOST_PATH="$2"
+SSH_HOST="$1"
+SSH_HOST_PATH="$2"
 SSH_PRIVATE_KEY="$3"
 SSH_KNOWN_HOST="$4"
 DRY_RUN="$5"
@@ -10,7 +10,23 @@ FROM=build/site
 SSH_PRIVATE_KEY_PATH="$HOME/.ssh/${GITHUB_REPOSITORY:-publish-docs}"
 
 if [ "$#" -ne 5 ]; then
-  echo -e "not enough arguments USAGE:\n\n$0 \$HOST \$HOST_PATH \$SSH_PRIVATE_KEY \$SSH_KNOWN_HOST \$DRY_RUN\n\n" >&2
+  echo -e "not enough arguments USAGE:\n\n$0 \$SSH_HOST \$SSH_HOST_PATH \$SSH_PRIVATE_KEY \$SSH_KNOWN_HOST \$DRY_RUN\n\n" >&2
+  exit 1
+fi
+if [ -z "$SSH_HOST" ]; then
+  echo -e "SSH_HOST was empty string"
+  exit 1
+fi
+if [ -z "$SSH_HOST_PATH" ]; then
+  echo -e "SSH_HOST_PATH was empty string"
+  exit 1
+fi
+if [ -z "$SSH_PRIVATE_KEY" ]; then
+  echo -e "SSH_PRIVATE_KEY was empty string"
+  exit 1
+fi
+if [ -z "$SSH_KNOWN_HOST" ]; then
+  echo -e "SSH_KNOWN_HOST was empty string"
   exit 1
 fi
 
@@ -28,7 +44,7 @@ fi
     RSYNC_OPTS="-c $RSYNC_OPTS$(find $FROM -mindepth 1 -maxdepth 1 \! -name 404.html \! -name '.*' -type f -printf ' --include /%P')"
     RSYNC_OPTS="$RSYNC_OPTS$(find $FROM -mindepth 1 -maxdepth 1 -type d \! -name _ -printf ' --include /%P --include /%P/**') --exclude **"
   fi
-  rsync $RSYNC_OPTS -e "ssh -i $SSH_PRIVATE_KEY_PATH" $FROM/ "$HOST:$HOST_PATH"
+  rsync $RSYNC_OPTS -e "ssh -i $SSH_PRIVATE_KEY_PATH" $FROM/ "$SSH_HOST:$SSH_HOST_PATH"
 )
 exit_code=$?
 
