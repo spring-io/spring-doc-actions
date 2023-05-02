@@ -21,7 +21,7 @@ fi
   echo "$SSH_PRIVATE_KEY" > "$SSH_PRIVATE_KEY_PATH"
   echo "$SSH_KNOWN_HOST" > ~/.ssh/known_hosts
   RSYNC_OPTS='-avz --delete '
-  if [ "$DRY_RUN" != "false"]; then
+  if [ "$DRY_RUN" != "false" ]; then
     RSYNC_OPTS="$RSYNC_OPTS --dry-run "
   fi
   if [ -n "$BUILD_REFNAME" ]; then
