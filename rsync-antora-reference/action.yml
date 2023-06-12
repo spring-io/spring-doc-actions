@@ -20,6 +20,10 @@ inputs:
     description: Set to false if should perform the sync, else a dry run is performed
     default: false
     required: false
+  site-path:
+    description: The path to the site that should be synced
+    default: build/site
+    required: false
 runs:
   using: 'composite'
   steps:
@@ -36,4 +40,4 @@ runs:
         fi
         # Extract repository_name from the owner/repository_name
         GITHUB_REPOSITORY_NAME=$(echo ${{ github.repository }} | cut -d '/' -f 2)
-        ${{ github.action_path }}/rsync-docs.sh  "${{ inputs.docs-username }}@${{ inputs.docs-host }}" "/opt/www/domains/spring.io/docs/htdocs/$GITHUB_REPOSITORY_NAME/reference/" "${{ inputs.docs-ssh-key }}" "${{ inputs.docs-ssh-host-key }}" "${{ inputs.dry-run }}"
+        ${{ github.action_path }}/rsync-docs.sh  "${{ inputs.docs-username }}@${{ inputs.docs-host }}" "/opt/www/domains/spring.io/docs/htdocs/$GITHUB_REPOSITORY_NAME/reference/" "${{ inputs.docs-ssh-key }}" "${{ inputs.docs-ssh-host-key }}" "${{ inputs.dry-run }}" "${{ inputs.site-path }}"

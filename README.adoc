@@ -28,6 +28,10 @@ inputs:
     description: Set to false if should perform the sync, else a dry run is performed
     default: false
     required: false
+  site-path:
+    description: The path to the site that should be synced
+    default: build/site
+    required: false
 ----
 
 Example usage:
