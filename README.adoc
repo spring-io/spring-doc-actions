@@ -3,6 +3,37 @@
 
 A set of GitHub actions for Spring documentation.
 
+== bust-cloudflare-antora-cache
+
+A GitHub action that busts the Cloudflare Cache for Spring based Antora docs.
+
+[source,yml]
+----
+inputs:
+  context-root:
+    description: The context root of the documentation (e.g. for https://docs.spring.io/spring-security/reference/ context-root is spring-security)
+    required: true
+  cloudflare-zone-id:
+    description: The cloudflare zone id
+    required: true
+  cloudflare-cache-token:
+    description: The cloudflare cache token
+    required: true
+----
+
+Example usage:
+
+.github/workflows/deploy-docs.yml
+[source,yml,subs=attributes+]
+----
+    - name: Bust Clouflare Cache
+      uses: spring-io/spring-doc-actions/bust-cloudflare-antora-cache@{ACTION_VERSION}
+      with:
+        context-root: spring-security
+        cloudflare-zone-id: ${{ secrets.CLOUDFLARE_ZONE_ID }}
+        cloudflare-cache-token: ${{ secrets.CLOUDFLARE_CACHE_TOKEN }}
+----
+
 == rsync-antora-reference
 
 A GitHub action that syncs Antora reference documentation using rsync with support for syncing a single version.
