@@ -35,7 +35,9 @@ fi
   set -f
   install -m 600 -D /dev/null "$SSH_PRIVATE_KEY_PATH"
   echo "$SSH_PRIVATE_KEY" > "$SSH_PRIVATE_KEY_PATH"
-  echo "$SSH_KNOWN_HOST" > ~/.ssh/known_hosts
+  if [ "$SSH_KNOWN_HOST" != "#" ]; then
+    echo "$SSH_KNOWN_HOST" > ~/.ssh/known_hosts
+  fi
   RSYNC_OPTS='-avz --delete '
   if [ "$DRY_RUN" != "false" ]; then
     RSYNC_OPTS="$RSYNC_OPTS --dry-run "
