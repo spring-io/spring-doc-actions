@@ -40,7 +40,7 @@ fi
   if [ "$DRY_RUN" != "false" ]; then
     RSYNC_OPTS="$RSYNC_OPTS --dry-run "
   fi
-  if [ -f "$FROM/.cache" ]; then
+  if [ -d "$FROM/.cache" ]; then
     RSYNC_OPTS="$RSYNC_OPTS$(find $FROM/.cache -printf ' --include /.cache/%P')"
   fi
   RSYNC_OPTS="$RSYNC_OPTS --exclude /.cache/* "
