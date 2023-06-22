@@ -43,7 +43,7 @@ fi
   if [ -f "$FROM/.cache" ]; then
     RSYNC_OPTS="$RSYNC_OPTS$(find $FROM/.cache -printf ' --include /.cache/%P')"
   fi
-  RSYNC_OPTS="$RSYNC_OPTS --exclude /.cache --exclude /.cache/* "
+  RSYNC_OPTS="$RSYNC_OPTS --exclude /.cache/* "
   if [ -n "$BUILD_REFNAME" ]; then
     RSYNC_OPTS="-c $RSYNC_OPTS$(find $FROM -mindepth 1 -maxdepth 1 \! -name 404.html \! -name '.*' -type f -printf ' --include /%P')"
     RSYNC_OPTS="$RSYNC_OPTS$(find $FROM -mindepth 1 -maxdepth 1 -type d \! -name _ -printf ' --include /%P --include /%P/**') --exclude **"
