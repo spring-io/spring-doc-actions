@@ -1,0 +1,7 @@
+So we do not have to add the submodules multiple times we add them here and then add symlinks to the directories for each project.
+To add all symlinks use:
+
+[source,bash]
+----
+ls -1 ../../bats-submodules/test | xargs -I{} ln -s ../../bats-submodules/test/{} {}
+----
