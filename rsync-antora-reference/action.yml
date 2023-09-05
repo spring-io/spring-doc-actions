@@ -30,14 +30,5 @@ runs:
     - id: publish-docs
       shell: bash
       run: |
-        if [ -z ${{ inputs.docs-username }} ]; then
-          echo 'docs-username cannot be empty'
-          exit 1
-        fi
-        if [ -z ${{ inputs.docs-host }} ]; then
-          echo 'docs-host cannot be empty'
-          exit 1
-        fi
-        # Extract repository_name from the owner/repository_name
-        GITHUB_REPOSITORY_NAME=$(echo ${{ github.repository }} | cut -d '/' -f 2)
-        ${{ github.action_path }}/rsync-docs.sh  "${{ inputs.docs-username }}@${{ inputs.docs-host }}" "/opt/www/domains/spring.io/docs/htdocs/$GITHUB_REPOSITORY_NAME/reference/" "${{ inputs.docs-ssh-key }}" "${{ inputs.docs-ssh-host-key }}" "${{ inputs.dry-run }}" "${{ inputs.site-path }}"
+        PATH=$PATH:${{ github.action_path }}/src
+        ${{ github.action_path }}/src/action.sh --docs-username ${{ inputs.docs-username }} --docs-host ${{ inputs.docs-host }} --docs-ssh-key ${{ inputs.docs-ssh-key }} --docs-ssh-host-key ${{ inputs.docs-ssh-host-key }} --site-path ${{ inputs.site-path }} --github-repository ${{ github.repository }}

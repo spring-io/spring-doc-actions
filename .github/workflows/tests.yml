@@ -1,0 +1,17 @@
+name: Run Tests
+
+on: [push, pull_request]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
+      - name: Run BATS tests
+        run: ./rsync-antora-reference/test/bats/bin/bats ./rsync-antora-reference/test/
