@@ -10,6 +10,10 @@ __action_usage() {
    --dry-run                      signals that rsync should be in dry run mode
    --site-path=PATH               the local directory path to sync to the server. Default build/site
    --github-repository=GH_REPO    the github repository (e.g. spring-projects/spring-security)
+   --httpdocs-path=PATH           the optional base httpdocs path (e.g. https://docs.spring.io/spring-security/reference would be /spring-security/reference)
+                                  If this is set, then the project must own the directory by ensuring to have a .github-repository file with the
+                                  <OWNER>/<REPOSITORY_NAME> as the content. The default is to use /\${REPOSITORY_NAME}/reference
+                                  from --github-repository
 "
 }
 
@@ -58,6 +62,10 @@ __action() {
           ;;
       --github-repository)
           github_repository="$2"
+          shift 2
+          ;;
+      --httpdocs-path)
+          httpdocs_path="$2"
           shift 2
           ;;
        --) shift;

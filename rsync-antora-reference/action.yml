@@ -24,6 +24,14 @@ inputs:
     description: The path to the site that should be synced
     default: build/site
     required: false
+  httpdocs-path:
+    description: |
+      The optional base httpdocs path (e.g. https://docs.spring.io/spring-security/reference would be /spring-security/reference)
+      If this is set, then the project must own the directory by ensuring to have a .github-repository file with the
+      <OWNER>/<REPOSITORY_NAME> as the content. The default is to use /\${REPOSITORY_NAME}/reference
+      from `github.repository`
+    required: false
+
 runs:
   using: 'composite'
   steps:
@@ -31,4 +39,8 @@ runs:
       shell: bash
       run: |
         PATH=$PATH:${{ github.action_path }}/src
-        ${{ github.action_path }}/src/action.sh --docs-username ${{ inputs.docs-username }} --docs-host ${{ inputs.docs-host }} --docs-ssh-key ${{ inputs.docs-ssh-key }} --docs-ssh-host-key ${{ inputs.docs-ssh-host-key }} --site-path ${{ inputs.site-path }} --github-repository ${{ github.repository }}
+        flag_options=''
+        if [ -z "${{ inputs.docs-username }}" ]; then
+          flag_options="${flag_options} --dry-run"
+        fi
+        ${{ github.action_path }}/src/action.sh --docs-username "${{ inputs.docs-username }}" --docs-host "${{ inputs.docs-host }}" --docs-ssh-key "${{ inputs.docs-ssh-key }}" --docs-ssh-host-key "${{ inputs.docs-ssh-host-key }}" --site-path "${{ inputs.site-path }}" --github-repository "${{ github.repository }}" --httpdocs-path "${{ inputs.httpdocs-path }}" $flag_options

@@ -63,6 +63,13 @@ inputs:
     description: The path to the site that should be synced
     default: build/site
     required: false
+  httpdocs-path:
+    description: |
+      The optional base httpdocs path (e.g. https://docs.spring.io/spring-security/reference would be /spring-security/reference)
+      If this is set, then the project must own the directory by ensuring to have a .github-repository file with the
+      <OWNER>/<REPOSITORY_NAME> as the content. The default is to use /\${REPOSITORY_NAME}/reference
+      from `github.repository`
+    required: false
 ----
 
 Example usage:

@@ -28,6 +28,10 @@ usage: action.sh [OPTION]...
    --dry-run                      signals that rsync should be in dry run mode
    --site-path=PATH               the local directory path to sync to the server. Default build/site
    --github-repository=GH_REPO    the github repository (e.g. spring-projects/spring-security)
+   --httpdocs-path=PATH           the optional base httpdocs path (e.g. https://docs.spring.io/spring-security/reference would be /spring-security/reference)
+                                  If this is set, then the project must own the directory by ensuring to have a .github-repository file with the
+                                  <OWNER>/<REPOSITORY_NAME> as the content. The default is to use /\${REPOSITORY_NAME}/reference
+                                  from --github-repository" ]
 }
 
 @test "invalid long option" {
@@ -188,4 +192,41 @@ usage: action.sh [OPTION]...
     unstub rsync_docs.sh
     unstub cleanup_ssh.sh
 }
+
+@test "httpdocs-path check httpdocs-path success" {
+    stub setup_ssh.sh "$(capture_program_args "setup_ssh")"
+    stub ssh "$(capture_program "ssh")"
+    stub rsync_docs.sh "$(capture_program_args "rsync_docs")"
+    stub cleanup_ssh.sh "$(capture_program_args "cleanup_ssh")"
+
+    run action.sh --docs-username USER --docs-host HOST --docs-ssh-key KEY --docs-ssh-host-key HOST_KEY --site-path SITE_PATH --github-repository spring-projects/spring-security --httpdocs-path /security/reference
+
+    assert_success
+    assert_program_args "setup_ssh" "--ssh-private-key-path $HOME/.ssh/spring-projects/spring-security --ssh-private-key KEY --ssh-known-host HOST_KEY"
+    assert_program_args "ssh" "-i $HOME/.ssh/spring-projects/spring-security USER@HOST bash -s -- --github-repository \"spring-projects/spring-security\" --ssh-docs-path \"/opt/www/domains/spring.io/docs/htdocs/security/reference/\""
+    assert_regex "$(get_program_stdin 'ssh')" 'check_github_repository_owner'
+    assert_program_args "rsync_docs" "--ssh-host USER@HOST --ssh-host-path /opt/www/domains/spring.io/docs/htdocs/security/reference/ --local-path SITE_PATH --ssh-private-key-path $HOME/.ssh/spring-projects/spring-security --build-ref-name \"\""
+    assert_program_args "cleanup_ssh" "--ssh-private-key-path $HOME/.ssh/spring-projects/spring-security"
+
+    unstub --allow-missing setup_ssh.sh
+    unstub ssh
+    unstub rsync_docs.sh
+    unstub cleanup_ssh.sh
+}
+
+@test "httpdocs-path check httpdocs-path failed" {
+    stub setup_ssh.sh "$(capture_program_args "setup_ssh")"
+    stub ssh "$(capture_program_args "ssh"); exit 2"
+    stub cleanup_ssh.sh "$(capture_program_args "cleanup_ssh")"
+
+    run action.sh --docs-username USER --docs-host HOST --docs-ssh-key KEY --docs-ssh-host-key HOST_KEY --site-path SITE_PATH --github-repository spring-projects/spring-security --httpdocs-path /security/reference
+
+    assert_failure
+    assert_program_args "setup_ssh" "--ssh-private-key-path $HOME/.ssh/spring-projects/spring-security --ssh-private-key KEY --ssh-known-host HOST_KEY"
+    assert_program_args "ssh" "-i $HOME/.ssh/spring-projects/spring-security USER@HOST bash -s -- --github-repository \"spring-projects/spring-security\" --ssh-docs-path \"/opt/www/domains/spring.io/docs/htdocs/security/reference/\""
+    assert_program_args "cleanup_ssh" "--ssh-private-key-path $HOME/.ssh/spring-projects/spring-security"
+
+    unstub --allow-missing setup_ssh.sh
+    unstub ssh
+    unstub cleanup_ssh.sh
 }
