@@ -1,5 +1,5 @@
 = spring-doc-actions
-:ACTION_VERSION: v0.0.7
+:ACTION_VERSION: v0.0.12
 
 A set of GitHub actions for Spring documentation.
 
