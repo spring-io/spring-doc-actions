@@ -77,20 +77,20 @@ __rsync_docs() {
     __rsync_docs_usage_error "Missing option '--ssh-private-key-path'"
   fi
 
-  local rysnc_opts='-avz --delete '
+  local rsync_opts='-avz --delete '
   if [ "$dry_run" != "false" ]; then
-    rysnc_opts="$rysnc_opts --dry-run "
+    rsync_opts="$rsync_opts --dry-run "
   fi
   if [ -d "$local_path/.cache" ]; then
-    rysnc_opts="$rysnc_opts$(find $local_path/.cache -printf ' --include /.cache/%P')"
+    rsync_opts="$rsync_opts$(find $local_path/.cache -printf ' --include /.cache/%P')"
   fi
-  rysnc_opts="$rysnc_opts --exclude /.github-repository --exclude /.cache --exclude /.cache/* "
+  rsync_opts="$rsync_opts --exclude /.github-repository --exclude /.cache --exclude /.cache/* "
   if [ -n "$build_ref_name" ]; then
-    rysnc_opts="-c $rysnc_opts$(find $local_path -mindepth 1 -maxdepth 1 \! -name 404.html \! -name '.*' -type f -printf ' --include /%P')"
-    rysnc_opts="$rysnc_opts$(find $local_path -mindepth 1 -maxdepth 1 -type d \! -name _ -printf ' --include /%P --include /%P/**') --exclude **"
+    rsync_opts="-c $rsync_opts$(find $local_path -mindepth 1 -maxdepth 1 \! -name 404.html \! -name '.*' -type f -printf ' --include /%P')"
+    rsync_opts="$rsync_opts$(find $local_path -mindepth 1 -maxdepth 1 -type d \! -name _ -printf ' --include /%P --include /%P/**') --exclude **"
   fi
   set -f
-  rsync $rysnc_opts -e "ssh -i $ssh_private_key_path" $local_path/ "$ssh_host:$ssh_host_path"
+  rsync $rsync_opts -e "ssh -i $ssh_private_key_path" $local_path/ "$ssh_host:$ssh_host_path"
   set +f
 }
 
