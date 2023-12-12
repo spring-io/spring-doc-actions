@@ -89,7 +89,9 @@ __rsync_docs() {
     rysnc_opts="-c $rysnc_opts$(find $local_path -mindepth 1 -maxdepth 1 \! -name 404.html \! -name '.*' -type f -printf ' --include /%P')"
     rysnc_opts="$rysnc_opts$(find $local_path -mindepth 1 -maxdepth 1 -type d \! -name _ -printf ' --include /%P --include /%P/**') --exclude **"
   fi
+  set -f
   rsync $rysnc_opts -e "ssh -i $ssh_private_key_path" $local_path/ "$ssh_host:$ssh_host_path"
+  set +f
 }
 
 
