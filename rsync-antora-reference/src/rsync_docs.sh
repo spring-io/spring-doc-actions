@@ -81,6 +81,9 @@ __rsync_docs() {
   if [ "$dry_run" != "false" ]; then
     rsync_opts="$rsync_opts --dry-run "
   fi
+  if [ -f "$local_path/.htaccess" ]; then
+    rsync_opts="$rsync_opts --include /.htaccess "
+  fi
   if [ -d "$local_path/.cache" ]; then
     rsync_opts="$rsync_opts$(find $local_path/.cache -printf ' --include /.cache/%P')"
   fi

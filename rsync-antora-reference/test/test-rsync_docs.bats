@@ -64,3 +64,27 @@ usage: rsync_docs.sh [OPTION]...
     assert [ "${lines[0]}" = "Error: Missing option '--ssh-private-key-path'" ]
     assert [ "${lines[1]}" = 'usage: rsync_docs.sh [OPTION]...' ]
 }
+
+@test "when exists .htaccess included before any excludes" {
+    local dir="${BATS_RESOURCE_TEMP_DIR}/htaccess"
+    stub rsync "$(capture_program_args "rsync")"
+
+    run rsync_docs.sh --ssh-host HOST --build-ref-name main --ssh-host-path HOST_PATH --ssh-private-key-path PRIVATE_KEY_PATH --local-path "$dir"
+
+    local rsync_args=$(get_program_args "rsync")
+    assert_success
+    assert_regex "$rsync_args" "^-c -avz --delete --include /.htaccess "
+    unstub rsync
+}
+
+@test "when does not exists .htaccess not included" {
+    local dir="${BATS_RESOURCE_TEMP_DIR}/no-htaccess"
+    stub rsync "$(capture_program_args "rsync")"
+
+    run rsync_docs.sh --ssh-host HOST --build-ref-name main --ssh-host-path HOST_PATH --ssh-private-key-path PRIVATE_KEY_PATH --local-path "$dir"
+
+    local rsync_args=$(get_program_args "rsync")
+    assert_success
+    refute_regex "$rsync_args" " --include /.htaccess "
+    unstub rsync
+}
