@@ -26,6 +26,9 @@ __action_usage_error() {
 __action() {
   local docs_username docs_host docs_ssh_key docs_ssh_host_key site_path github_repository httpdocs_path valid_args
   local rsync_flag_options=''
+  if [ ! -z "$BUILD_REFNAME" ]; then
+    rsync_flag_options="${rsync_flag_options} --build-ref-name $BUILD_REFNAME"
+  fi
   valid_args=$(getopt --options '' --long docs-username:,docs-host:,docs-ssh-key:,docs-ssh-host-key:,dry-run,site-path:,github-repository:,httpdocs-path: -- "$@")
   if [[ $? -ne 0 ]]; then
     __action_usage
@@ -96,6 +99,7 @@ __action() {
     __action_usage_error "Missing option '--github-repository'"
   fi
 
+
   ## Extract repository_name from the owner/repository_name
   local github_repository_name="$(echo ${github_repository} | cut -d '/' -f 2)"
   local ssh_private_key_path="$HOME/.ssh/${github_repository:-publish-docs}"
@@ -112,7 +116,7 @@ __action() {
       local pwd="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
       ssh -i "$ssh_private_key_path" "$ssh_host" 'bash -s' < "$pwd/check_github_repository_owner.sh" -- --github-repository "\"$github_repository\"" --ssh-docs-path "\"$ssh_host_path\""
     fi
-    rsync_docs.sh --ssh-host "$ssh_host" --ssh-host-path "$ssh_host_path" --local-path "$site_path" --ssh-private-key-path "$ssh_private_key_path" --build-ref-name "\"$BUILD_REFNAME\"" $rsync_flag_options
+    rsync_docs.sh --ssh-host "$ssh_host" --ssh-host-path "$ssh_host_path" --local-path "$site_path" --ssh-private-key-path "$ssh_private_key_path" $rsync_flag_options
   )
   exit_code=$?
 

@@ -73,7 +73,7 @@ usage: action.sh [OPTION]...
     assert_success
     assert_output "" # No warnings due to spaces
     assert_program_args "setup_ssh" "--ssh-private-key-path $HOME/.ssh/spring-projects/spring-security --ssh-private-key SSH KEY --ssh-known-host HOST_KEY"
-    assert_program_args "rsync_docs" "--ssh-host USER@HOST --ssh-host-path /opt/www/domains/spring.io/docs/htdocs/spring-security/reference/ --local-path SITE_PATH --ssh-private-key-path $HOME/.ssh/spring-projects/spring-security --build-ref-name \"\""
+    assert_program_args "rsync_docs" "--ssh-host USER@HOST --ssh-host-path /opt/www/domains/spring.io/docs/htdocs/spring-security/reference/ --local-path SITE_PATH --ssh-private-key-path $HOME/.ssh/spring-projects/spring-security"
     assert_program_args "cleanup_ssh" "--ssh-private-key-path $HOME/.ssh/spring-projects/spring-security"
 
     unstub --allow-missing setup_ssh.sh
@@ -98,7 +98,7 @@ usage: action.sh [OPTION]...
     assert_success
     assert_output "" # No warnings due to spaces
     assert_program_args "setup_ssh" "--ssh-private-key-path $HOME/.ssh/spring-projects/spring-security --ssh-private-key SSH_KEY --ssh-known-host HOST KEY"
-    assert_program_args "rsync_docs" "--ssh-host USER@HOST --ssh-host-path /opt/www/domains/spring.io/docs/htdocs/spring-security/reference/ --local-path SITE_PATH --ssh-private-key-path $HOME/.ssh/spring-projects/spring-security --build-ref-name \"\""
+    assert_program_args "rsync_docs" "--ssh-host USER@HOST --ssh-host-path /opt/www/domains/spring.io/docs/htdocs/spring-security/reference/ --local-path SITE_PATH --ssh-private-key-path $HOME/.ssh/spring-projects/spring-security"
     assert_program_args "cleanup_ssh" "--ssh-private-key-path $HOME/.ssh/spring-projects/spring-security"
 
     unstub --allow-missing setup_ssh.sh
@@ -122,7 +122,7 @@ usage: action.sh [OPTION]...
 
     assert_success
     assert_program_args "setup_ssh" "--ssh-private-key-path $HOME/.ssh/spring-projects/spring-security --ssh-private-key KEY --ssh-known-host HOST_KEY"
-    assert_program_args "rsync_docs" "--ssh-host USER@HOST --ssh-host-path /opt/www/domains/spring.io/docs/htdocs/spring-security/reference/ --local-path SITE_PATH --ssh-private-key-path $HOME/.ssh/spring-projects/spring-security --build-ref-name \"\""
+    assert_program_args "rsync_docs" "--ssh-host USER@HOST --ssh-host-path /opt/www/domains/spring.io/docs/htdocs/spring-security/reference/ --local-path SITE_PATH --ssh-private-key-path $HOME/.ssh/spring-projects/spring-security"
     assert_program_args "cleanup_ssh" "--ssh-private-key-path $HOME/.ssh/spring-projects/spring-security"
 
     unstub --allow-missing setup_ssh.sh
@@ -139,7 +139,7 @@ usage: action.sh [OPTION]...
 
     assert_success
     assert_program_args "setup_ssh" "--ssh-private-key-path $HOME/.ssh/spring-projects/spring-security --ssh-private-key KEY --ssh-known-host HOST_KEY"
-    assert_program_args "rsync_docs" "--ssh-host USER@HOST --ssh-host-path /opt/www/domains/spring.io/docs/htdocs/spring-security/reference/ --local-path build/site --ssh-private-key-path $HOME/.ssh/spring-projects/spring-security --build-ref-name \"\""
+    assert_program_args "rsync_docs" "--ssh-host USER@HOST --ssh-host-path /opt/www/domains/spring.io/docs/htdocs/spring-security/reference/ --local-path build/site --ssh-private-key-path $HOME/.ssh/spring-projects/spring-security"
     assert_program_args "cleanup_ssh" "--ssh-private-key-path $HOME/.ssh/spring-projects/spring-security"
 }
 
@@ -153,7 +153,7 @@ usage: action.sh [OPTION]...
 
     assert_success
     assert_program_args "setup_ssh" "--ssh-private-key-path $HOME/.ssh/spring-projects/spring-security --ssh-private-key KEY --ssh-known-host HOST_KEY"
-    assert_program_args "rsync_docs" "--ssh-host USER@HOST --ssh-host-path /opt/www/domains/spring.io/docs/htdocs/spring-security/reference/ --local-path $BATS_TEMP_DIR --ssh-private-key-path $HOME/.ssh/spring-projects/spring-security --build-ref-name \"\""
+    assert_program_args "rsync_docs" "--ssh-host USER@HOST --ssh-host-path /opt/www/domains/spring.io/docs/htdocs/spring-security/reference/ --local-path $BATS_TEMP_DIR --ssh-private-key-path $HOME/.ssh/spring-projects/spring-security"
     assert_program_args "cleanup_ssh" "--ssh-private-key-path $HOME/.ssh/spring-projects/spring-security"
 }
 
@@ -166,7 +166,7 @@ usage: action.sh [OPTION]...
 
     assert_success
     assert_program_args "setup_ssh" "--ssh-private-key-path $HOME/.ssh/spring-projects/spring-security --ssh-private-key KEY --ssh-known-host HOST_KEY"
-    assert_program_args "rsync_docs" "--ssh-host USER@HOST --ssh-host-path /opt/www/domains/spring.io/docs/htdocs/spring-security/reference/ --local-path SITE_PATH --ssh-private-key-path $HOME/.ssh/spring-projects/spring-security --build-ref-name \"\" --dry-run"
+    assert_program_args "rsync_docs" "--ssh-host USER@HOST --ssh-host-path /opt/www/domains/spring.io/docs/htdocs/spring-security/reference/ --local-path SITE_PATH --ssh-private-key-path $HOME/.ssh/spring-projects/spring-security --dry-run"
     assert_program_args "cleanup_ssh" "--ssh-private-key-path $HOME/.ssh/spring-projects/spring-security"
 
     unstub --allow-missing setup_ssh.sh
@@ -185,7 +185,7 @@ usage: action.sh [OPTION]...
 
     assert_success
     assert_program_args "setup_ssh" "--ssh-private-key-path $HOME/.ssh/spring-projects/spring-security --ssh-private-key KEY --ssh-known-host HOST_KEY"
-    assert_program_args "rsync_docs" "--ssh-host USER@HOST --ssh-host-path /opt/www/domains/spring.io/docs/htdocs/spring-security/reference/ --local-path SITE_PATH --ssh-private-key-path $HOME/.ssh/spring-projects/spring-security --build-ref-name \"6.1.x\" --dry-run"
+    assert_program_args "rsync_docs" "--ssh-host USER@HOST --ssh-host-path /opt/www/domains/spring.io/docs/htdocs/spring-security/reference/ --local-path SITE_PATH --ssh-private-key-path $HOME/.ssh/spring-projects/spring-security --build-ref-name 6.1.x --dry-run"
     assert_program_args "cleanup_ssh" "--ssh-private-key-path $HOME/.ssh/spring-projects/spring-security"
 
     unstub --allow-missing setup_ssh.sh
@@ -205,7 +205,7 @@ usage: action.sh [OPTION]...
     assert_program_args "setup_ssh" "--ssh-private-key-path $HOME/.ssh/spring-projects/spring-security --ssh-private-key KEY --ssh-known-host HOST_KEY"
     assert_program_args "ssh" "-i $HOME/.ssh/spring-projects/spring-security USER@HOST bash -s -- --github-repository \"spring-projects/spring-security\" --ssh-docs-path \"/opt/www/domains/spring.io/docs/htdocs/security/reference/\""
     assert_regex "$(get_program_stdin 'ssh')" 'check_github_repository_owner'
-    assert_program_args "rsync_docs" "--ssh-host USER@HOST --ssh-host-path /opt/www/domains/spring.io/docs/htdocs/security/reference/ --local-path SITE_PATH --ssh-private-key-path $HOME/.ssh/spring-projects/spring-security --build-ref-name \"\""
+    assert_program_args "rsync_docs" "--ssh-host USER@HOST --ssh-host-path /opt/www/domains/spring.io/docs/htdocs/security/reference/ --local-path SITE_PATH --ssh-private-key-path $HOME/.ssh/spring-projects/spring-security"
     assert_program_args "cleanup_ssh" "--ssh-private-key-path $HOME/.ssh/spring-projects/spring-security"
 
     unstub --allow-missing setup_ssh.sh
