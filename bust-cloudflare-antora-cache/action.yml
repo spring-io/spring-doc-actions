@@ -7,6 +7,9 @@ inputs:
   context-root:
     description: The context root of the documentation (e.g. for https://docs.spring.io/spring-security/reference/ context-root is spring-security)
     required: true
+  context-path:
+    description: The context path of the documentation (defaults to /reference/)
+    default: '/reference/'
   cloudflare-zone-id:
     description: The cloudflare zone id
     required: true
@@ -19,4 +22,4 @@ runs:
     - id: bust-cache
       shell: bash
       run: |
-        ${{ github.action_path }}/bust-cloudflare-antora-cache.sh  "${{ inputs.context-root }}" "${{ inputs.cloudflare-zone-id }}" "${{ inputs.cloudflare-cache-token }}"
+        ${{ github.action_path }}/bust-cloudflare-antora-cache.sh  "${{ inputs.context-root }}" "${{ inputs.context-path }}" "${{ inputs.cloudflare-zone-id }}" "${{ inputs.cloudflare-cache-token }}"
