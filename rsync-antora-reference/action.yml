@@ -40,7 +40,7 @@ runs:
       run: |
         PATH=$PATH:${{ github.action_path }}/src
         flag_options=''
-        if [ -z "${{ inputs.docs-username }}" ]; then
+        if [ -z "${{ inputs.dry-run }}" ]; then
           flag_options="${flag_options} --dry-run"
         fi
         ${{ github.action_path }}/src/action.sh --docs-username "${{ inputs.docs-username }}" --docs-host "${{ inputs.docs-host }}" --docs-ssh-key "${{ inputs.docs-ssh-key }}" --docs-ssh-host-key "${{ inputs.docs-ssh-host-key }}" --site-path "${{ inputs.site-path }}" --github-repository "${{ github.repository }}" --httpdocs-path "${{ inputs.httpdocs-path }}" $flag_options
