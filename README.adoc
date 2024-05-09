@@ -86,3 +86,52 @@ Example usage:
         docs-ssh-host-key: ${{ secrets.DOCS_SSH_HOST_KEY }}
         dry-run: true
 ----
+
+== update-antora-ui-spring
+
+A GitHub Action that detects if there is a new version of the Antora UI Spring artifact and creates a PR to update it.
+
+[source,yml]
+----
+inputs:
+  docs-branch:
+    description: The branch where the file containing the Antora UI Spring artifact is. Default is 'docs-build'
+    default: 'docs-build'
+  workflow-branch-suffix:
+    description: The suffix for the branch that will be created by the workflow with the changes, resolves to ${docs-branch}_${workflow-branch-suffix}. Default is update-antora-ui-spring
+    default: 'update-antora-ui-spring'
+  antora-file-path:
+    description: Path to the Antora file containing the Antora UI Spring artifact. Default is 'antora-playbook.yml'.
+    default: 'antora-playbook.yml'
+  token:
+    description: Token with write permission to pull-requests, issues and contents
+    required: true
+----
+
+Example usage:
+
+.github/workflows/update-antora-ui-spring.yml
+[source,yml,subs=attributes+]
+----
+permissions:
+  pull-requests: write
+  issues: write
+  contents: write
+
+jobs:
+  update-antora-ui-spring:
+    runs-on: ubuntu-latest
+    name: Update Antora UI Spring
+    strategy:
+      matrix:
+        branch: ['main', 'docs-build']
+    steps:
+      - uses: spring-io/spring-docs-actions/update-antora-spring-ui@{ACTION_VERSION}
+        name: Update antora-playbook.yml
+        with:
+          docs-branch: ${{ matrix.branch }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+----
+
+The PR will only be created if there is no open PR for the same branch, even if there is a newer version of Antora UI Spring.
+For example, if there is an open PR to update from version `v0.4.11` to `v0.4.12` and `v0.4.13` is released, the workflow won't open a new PR for `v0.4.13` if the previous one is not closed.

@@ -1,0 +1,100 @@
+name: Update Antora UI Spring
+description: A GitHub Action that detects if there is a new version of the Antora UI Spring artifact and creates a PR to update it.
+
+inputs:
+  docs-branch:
+    description: The branch where the file containing the Antora UI Spring artifact is. Default is 'docs-build'
+    default: 'docs-build'
+  workflow-branch-suffix:
+    description: The suffix for the branch that will be created by the workflow with the changes, resolves to ${docs-branch}_${workflow-branch-suffix}. Default is update-antora-ui-spring
+    default: 'update-antora-ui-spring'
+  antora-file-path:
+    description: Path to the Antora file containing the Antora UI Spring artifact. Default is 'antora-playbook.yml'.
+    default: 'antora-playbook.yml'
+  token:
+    description: Token with write permission to pull-requests, issues and contents
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/checkout@v4
+    - id: generate-branch-name
+      name: Generate Branch Name
+      run: echo "branch-name=${{ inputs.docs-branch }}_${{ inputs.workflow-branch-suffix }}" >> $GITHUB_OUTPUT
+      shell: bash
+    - id: check-existing-pr
+      name: Check for Existing PR
+      run: |
+        pr_count=$(gh pr list --head ${{ steps.generate-branch-name.outputs.branch-name }} --base ${{ inputs.docs-branch }} --state open --json id | jq length)
+        if [[ $pr_count -eq 0 ]]; then
+          echo "continue=true" >> $GITHUB_OUTPUT
+        else
+          echo "Found at least one open PR, won't make any changes until the PR is closed."
+        fi
+      shell: bash
+      env:
+        GH_TOKEN: ${{ inputs.token }}
+    - name: Delete Existing Branch If No PR Open
+      if: ${{ steps.check-existing-pr.outputs.continue == 'true' }}
+      run: |
+        if git ls-remote --exit-code --heads origin "${{ steps.generate-branch-name.outputs.branch-name }}" >/dev/null 2>&1; then
+          echo "Deleting ${{ steps.generate-branch-name.outputs.branch-name }} branch"
+          git push -d origin ${{ steps.generate-branch-name.outputs.branch-name }}
+        fi
+      shell: bash
+    - name: Get Current UI Bundle URL
+      id: current
+      if: ${{ steps.check-existing-pr.outputs.continue == 'true' }}
+      run: |
+        echo current_ui_bundle_url=$(grep -oE 'http[s]?://[^ ]+/ui-bundle.zip' -i -w ${{ inputs.antora-file-path }}) >> $GITHUB_OUTPUT
+      shell: bash
+    - name: Get Latest UI Bundle URL
+      id: latest
+      if: ${{ steps.check-existing-pr.outputs.continue == 'true' }}
+      run: |
+        echo latest_ui_bundle_url=$(gh api /repos/spring-io/antora-ui-spring/releases/latest | jq -r '.assets[] | select(.name == "ui-bundle.zip") | .browser_download_url') >> $GITHUB_OUTPUT
+        echo tag_name=$(gh api /repos/spring-io/antora-ui-spring/releases/latest | jq -r '.tag_name') >> $GITHUB_OUTPUT
+      shell: bash
+      env:
+        GH_TOKEN: ${{ inputs.token }}
+    - name: Replace Current with Latest
+      id: replace
+      if: ${{ steps.current.outputs.current_ui_bundle_url != steps.latest.outputs.latest_ui_bundle_url }}
+      run: |
+        sed -i 's@${{ steps.current.outputs.current_ui_bundle_url }}@${{ steps.latest.outputs.latest_ui_bundle_url }}@g' ${{ inputs.antora-file-path }}
+      shell: bash
+    - name: Setup Git User
+      run: |
+        git config --global user.name 'github-actions[bot]'
+        git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+      shell: bash
+    - name: Create Commit
+      id: commit
+      run: |
+        if [ "$(git status --porcelain)" ]; then 
+          git switch -c ${{ steps.generate-branch-name.outputs.branch-name }}
+          git add .
+          git commit -m "Update Antora Spring UI to ${{ steps.latest.outputs.tag_name }}"
+          git push origin ${{ steps.generate-branch-name.outputs.branch-name }}
+          echo create_pr=true >> $GITHUB_OUTPUT
+        else
+          echo "No changes detected, will not create a commit"
+          echo create_pr=false >> $GITHUB_OUTPUT
+        fi
+      shell: bash
+    - name: Create Pull Request
+      if: ${{ steps.commit.outputs.create_pr == 'true' }}
+      id: pull_request
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const { repo, owner } = context.repo;
+          await github.rest.pulls.create({
+            title: 'Update Antora UI Spring to ${{ steps.latest.outputs.tag_name }}',
+            owner: owner,
+            repo: repo,
+            head: '${{ steps.generate-branch-name.outputs.branch-name }}',
+            base: '${{ inputs.docs-branch }}',
+          });
+
