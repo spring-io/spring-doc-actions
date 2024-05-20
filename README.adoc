@@ -121,15 +121,21 @@ permissions:
 jobs:
   update-antora-ui-spring:
     runs-on: ubuntu-latest
-    name: Update Antora UI Spring
+    name: Update
     strategy:
       matrix:
-        branch: ['main', 'docs-build']
+        branch: [ '5.8.x', '6.1.x', '6.2.x', 'main' ]
     steps:
-      - uses: spring-io/spring-docs-actions/update-antora-spring-ui@{ACTION_VERSION}
-        name: Update antora-playbook.yml
+      - uses: spring-io/spring-doc-actions/update-antora-spring-ui@{ACTION_VERSION}
+        name: Update on Supported Branches
         with:
           docs-branch: ${{ matrix.branch }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          antora-file-path: 'docs/antora-playbook.yml'
+      - uses: spring-io/spring-doc-actions/update-antora-spring-ui@{ACTION_VERSION}
+        name: Update on docs-build
+        with:
+          docs-branch: 'docs-build'
           token: ${{ secrets.GITHUB_TOKEN }}
 ----
 

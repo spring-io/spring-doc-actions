@@ -19,6 +19,8 @@ runs:
   using: "composite"
   steps:
     - uses: actions/checkout@v4
+      with:
+        ref: ${{ inputs.docs-branch }}
     - id: generate-branch-name
       name: Generate Branch Name
       run: echo "branch-name=${{ inputs.docs-branch }}_${{ inputs.workflow-branch-suffix }}" >> $GITHUB_OUTPUT
