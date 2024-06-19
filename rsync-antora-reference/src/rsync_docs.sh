@@ -94,9 +94,10 @@ __rsync_docs() {
   fi
   # Disable filename expansion (globbing)
   # https://www.gnu.org/software/bash/manual/html_node/The-Set-Builtin.html
-  set -f
-  rsync $rsync_opts -e "ssh -i $ssh_private_key_path" $local_path/ "$ssh_host:$ssh_host_path"
-  set +f
+  (
+      set -f
+      rsync $rsync_opts -e "ssh -i $ssh_private_key_path" $local_path/ "$ssh_host:$ssh_host_path"
+  )
 }
 
 

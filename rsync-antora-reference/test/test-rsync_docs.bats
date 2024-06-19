@@ -88,3 +88,13 @@ usage: rsync_docs.sh [OPTION]...
     refute_regex "$rsync_args" " --include /.htaccess "
     unstub rsync
 }
+
+@test "when rsync fails script returns non-zero" {
+    local dir="${BATS_RESOURCE_TEMP_DIR}/no-htaccess"
+    stub rsync "exit 1"
+
+    run rsync_docs.sh --ssh-host HOST --build-ref-name main --ssh-host-path HOST_PATH --ssh-private-key-path PRIVATE_KEY_PATH --local-path "$dir"
+
+    assert_failure
+    unstub rsync
+}
