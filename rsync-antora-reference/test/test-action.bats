@@ -66,6 +66,7 @@ usage: action.sh [OPTION]...
 @test "docs-ssh-key with space" {
     stub setup_ssh.sh "$(capture_program_args "setup_ssh")"
     stub rsync_docs.sh "$(capture_program_args "rsync_docs")"
+    stub ssh "$(capture_program "ssh")"
     stub cleanup_ssh.sh "$(capture_program_args "cleanup_ssh")"
 
     run action.sh --docs-username USER --docs-host HOST --docs-ssh-key 'SSH KEY' --docs-ssh-host-key HOST_KEY --site-path SITE_PATH --github-repository spring-projects/spring-security
@@ -74,10 +75,13 @@ usage: action.sh [OPTION]...
     assert_output "" # No warnings due to spaces
     assert_program_args "setup_ssh" "--ssh-private-key-path $HOME/.ssh/spring-projects/spring-security --ssh-private-key SSH KEY --ssh-known-host HOST_KEY"
     assert_program_args "rsync_docs" "--ssh-host USER@HOST --ssh-host-path /opt/www/domains/spring.io/docs/htdocs/spring-security/reference/ --local-path SITE_PATH --ssh-private-key-path $HOME/.ssh/spring-projects/spring-security"
+    assert_program_args "ssh" "-i $HOME/.ssh/spring-projects/spring-security USER@HOST bash -s -- --zip-name \"spring-security-docs.zip\" --ssh-docs-path \"/opt/www/domains/spring.io/docs/htdocs/spring-security/reference/\""
+    assert_regex "$(get_program_stdin 'ssh')" 'zip_docs'
     assert_program_args "cleanup_ssh" "--ssh-private-key-path $HOME/.ssh/spring-projects/spring-security"
 
     unstub --allow-missing setup_ssh.sh
     unstub rsync_docs.sh
+    unstub ssh
     unstub cleanup_ssh.sh
 }
 
@@ -91,6 +95,7 @@ usage: action.sh [OPTION]...
 @test "docs-ssh-host-key with space" {
     stub setup_ssh.sh "$(capture_program_args "setup_ssh")"
     stub rsync_docs.sh "$(capture_program_args "rsync_docs")"
+    stub ssh "$(capture_program "ssh")"
     stub cleanup_ssh.sh "$(capture_program_args "cleanup_ssh")"
 
     run action.sh --docs-username USER --docs-host HOST --docs-ssh-key 'SSH_KEY' --docs-ssh-host-key 'HOST KEY' --site-path SITE_PATH --github-repository spring-projects/spring-security
@@ -99,10 +104,13 @@ usage: action.sh [OPTION]...
     assert_output "" # No warnings due to spaces
     assert_program_args "setup_ssh" "--ssh-private-key-path $HOME/.ssh/spring-projects/spring-security --ssh-private-key SSH_KEY --ssh-known-host HOST KEY"
     assert_program_args "rsync_docs" "--ssh-host USER@HOST --ssh-host-path /opt/www/domains/spring.io/docs/htdocs/spring-security/reference/ --local-path SITE_PATH --ssh-private-key-path $HOME/.ssh/spring-projects/spring-security"
+    assert_program_args "ssh" "-i $HOME/.ssh/spring-projects/spring-security USER@HOST bash -s -- --zip-name \"spring-security-docs.zip\" --ssh-docs-path \"/opt/www/domains/spring.io/docs/htdocs/spring-security/reference/\""
+    assert_regex "$(get_program_stdin 'ssh')" 'zip_docs'
     assert_program_args "cleanup_ssh" "--ssh-private-key-path $HOME/.ssh/spring-projects/spring-security"
 
     unstub --allow-missing setup_ssh.sh
     unstub rsync_docs.sh
+    unstub ssh
     unstub cleanup_ssh.sh
 }
 
@@ -116,6 +124,7 @@ usage: action.sh [OPTION]...
 @test "valid arguments" {
     stub setup_ssh.sh "$(capture_program_args "setup_ssh")"
     stub rsync_docs.sh "$(capture_program_args "rsync_docs")"
+    stub ssh "$(capture_program "ssh")"
     stub cleanup_ssh.sh "$(capture_program_args "cleanup_ssh")"
 
     run action.sh --docs-username USER --docs-host HOST --docs-ssh-key KEY --docs-ssh-host-key HOST_KEY --site-path SITE_PATH --github-repository spring-projects/spring-security
@@ -123,16 +132,20 @@ usage: action.sh [OPTION]...
     assert_success
     assert_program_args "setup_ssh" "--ssh-private-key-path $HOME/.ssh/spring-projects/spring-security --ssh-private-key KEY --ssh-known-host HOST_KEY"
     assert_program_args "rsync_docs" "--ssh-host USER@HOST --ssh-host-path /opt/www/domains/spring.io/docs/htdocs/spring-security/reference/ --local-path SITE_PATH --ssh-private-key-path $HOME/.ssh/spring-projects/spring-security"
+    assert_program_args "ssh" "-i $HOME/.ssh/spring-projects/spring-security USER@HOST bash -s -- --zip-name \"spring-security-docs.zip\" --ssh-docs-path \"/opt/www/domains/spring.io/docs/htdocs/spring-security/reference/\""
+    assert_regex "$(get_program_stdin 'ssh')" 'zip_docs'
     assert_program_args "cleanup_ssh" "--ssh-private-key-path $HOME/.ssh/spring-projects/spring-security"
 
     unstub --allow-missing setup_ssh.sh
     unstub rsync_docs.sh
+    unstub ssh
     unstub cleanup_ssh.sh
 }
 
 @test "missing site-path defaults build/site" {
     stub setup_ssh.sh "$(capture_program_args "setup_ssh")"
     stub rsync_docs.sh "$(capture_program_args "rsync_docs")"
+    stub ssh "$(capture_program "ssh")"
     stub cleanup_ssh.sh "$(capture_program_args "cleanup_ssh")"
 
     run action.sh --docs-username USER --docs-host HOST --docs-ssh-key KEY --docs-ssh-host-key HOST_KEY --github-repository spring-projects/spring-security
@@ -140,9 +153,13 @@ usage: action.sh [OPTION]...
     assert_success
     assert_program_args "setup_ssh" "--ssh-private-key-path $HOME/.ssh/spring-projects/spring-security --ssh-private-key KEY --ssh-known-host HOST_KEY"
     assert_program_args "rsync_docs" "--ssh-host USER@HOST --ssh-host-path /opt/www/domains/spring.io/docs/htdocs/spring-security/reference/ --local-path build/site --ssh-private-key-path $HOME/.ssh/spring-projects/spring-security"
+    assert_program_args "ssh" "-i $HOME/.ssh/spring-projects/spring-security USER@HOST bash -s -- --zip-name \"spring-security-docs.zip\" --ssh-docs-path \"/opt/www/domains/spring.io/docs/htdocs/spring-security/reference/\""
+    assert_regex "$(get_program_stdin 'ssh')" 'zip_docs'
     assert_program_args "cleanup_ssh" "--ssh-private-key-path $HOME/.ssh/spring-projects/spring-security"
+
     unstub --allow-missing setup_ssh.sh
     unstub rsync_docs.sh
+    unstub ssh
     unstub cleanup_ssh.sh
 }
 
@@ -150,6 +167,7 @@ usage: action.sh [OPTION]...
 @test "site-path where path exists does not default build/site" {
     stub setup_ssh.sh "$(capture_program_args "setup_ssh")"
     stub rsync_docs.sh "$(capture_program_args "rsync_docs")"
+    stub ssh "$(capture_program "ssh")"
     stub cleanup_ssh.sh "$(capture_program_args "cleanup_ssh")"
 
     run action.sh --docs-username USER --docs-host HOST --site-path "$BATS_TEMP_DIR" --docs-ssh-key KEY --docs-ssh-host-key HOST_KEY --github-repository spring-projects/spring-security
@@ -157,16 +175,20 @@ usage: action.sh [OPTION]...
     assert_success
     assert_program_args "setup_ssh" "--ssh-private-key-path $HOME/.ssh/spring-projects/spring-security --ssh-private-key KEY --ssh-known-host HOST_KEY"
     assert_program_args "rsync_docs" "--ssh-host USER@HOST --ssh-host-path /opt/www/domains/spring.io/docs/htdocs/spring-security/reference/ --local-path $BATS_TEMP_DIR --ssh-private-key-path $HOME/.ssh/spring-projects/spring-security"
+    assert_program_args "ssh" "-i $HOME/.ssh/spring-projects/spring-security USER@HOST bash -s -- --zip-name \"spring-security-docs.zip\" --ssh-docs-path \"/opt/www/domains/spring.io/docs/htdocs/spring-security/reference/\""
+    assert_regex "$(get_program_stdin 'ssh')" 'zip_docs'
     assert_program_args "cleanup_ssh" "--ssh-private-key-path $HOME/.ssh/spring-projects/spring-security"
 
     unstub --allow-missing setup_ssh.sh
     unstub rsync_docs.sh
+    unstub ssh
     unstub cleanup_ssh.sh
 }
 
 @test "dry-run=true" {
     stub setup_ssh.sh "$(capture_program_args "setup_ssh")"
     stub rsync_docs.sh "$(capture_program_args "rsync_docs")"
+    stub ssh "$(capture_program "ssh")"
     stub cleanup_ssh.sh "$(capture_program_args "cleanup_ssh")"
 
     run action.sh --docs-username USER --docs-host HOST --docs-ssh-key KEY --docs-ssh-host-key HOST_KEY --site-path SITE_PATH --github-repository spring-projects/spring-security --dry-run
@@ -174,16 +196,20 @@ usage: action.sh [OPTION]...
     assert_success
     assert_program_args "setup_ssh" "--ssh-private-key-path $HOME/.ssh/spring-projects/spring-security --ssh-private-key KEY --ssh-known-host HOST_KEY"
     assert_program_args "rsync_docs" "--ssh-host USER@HOST --ssh-host-path /opt/www/domains/spring.io/docs/htdocs/spring-security/reference/ --local-path SITE_PATH --ssh-private-key-path $HOME/.ssh/spring-projects/spring-security --dry-run"
+    assert_program_args "ssh" "-i $HOME/.ssh/spring-projects/spring-security USER@HOST bash -s -- --zip-name \"spring-security-docs.zip\" --ssh-docs-path \"/opt/www/domains/spring.io/docs/htdocs/spring-security/reference/\""
+    assert_regex "$(get_program_stdin 'ssh')" 'zip_docs'
     assert_program_args "cleanup_ssh" "--ssh-private-key-path $HOME/.ssh/spring-projects/spring-security"
 
     unstub --allow-missing setup_ssh.sh
     unstub rsync_docs.sh
+    unstub ssh
     unstub cleanup_ssh.sh
 }
 
 @test "BUILD_REFNAME set" {
     stub setup_ssh.sh "$(capture_program_args "setup_ssh")"
     stub rsync_docs.sh "$(capture_program_args "rsync_docs")"
+    stub ssh "$(capture_program "ssh")"
     stub cleanup_ssh.sh "$(capture_program_args "cleanup_ssh")"
 
     export BUILD_REFNAME=6.1.x
@@ -193,10 +219,13 @@ usage: action.sh [OPTION]...
     assert_success
     assert_program_args "setup_ssh" "--ssh-private-key-path $HOME/.ssh/spring-projects/spring-security --ssh-private-key KEY --ssh-known-host HOST_KEY"
     assert_program_args "rsync_docs" "--ssh-host USER@HOST --ssh-host-path /opt/www/domains/spring.io/docs/htdocs/spring-security/reference/ --local-path SITE_PATH --ssh-private-key-path $HOME/.ssh/spring-projects/spring-security --build-ref-name 6.1.x --dry-run"
+    assert_program_args "ssh" "-i $HOME/.ssh/spring-projects/spring-security USER@HOST bash -s -- --zip-name \"spring-security-docs.zip\" --ssh-docs-path \"/opt/www/domains/spring.io/docs/htdocs/spring-security/reference/\""
+    assert_regex "$(get_program_stdin 'ssh')" 'zip_docs'
     assert_program_args "cleanup_ssh" "--ssh-private-key-path $HOME/.ssh/spring-projects/spring-security"
 
     unstub --allow-missing setup_ssh.sh
     unstub rsync_docs.sh
+    unstub ssh
     unstub cleanup_ssh.sh
 }
 
@@ -204,14 +233,17 @@ usage: action.sh [OPTION]...
     stub setup_ssh.sh "$(capture_program_args "setup_ssh")"
     stub ssh "$(capture_program "ssh")"
     stub rsync_docs.sh "$(capture_program_args "rsync_docs")"
+    stub ssh "$(capture_program "ssh")"
     stub cleanup_ssh.sh "$(capture_program_args "cleanup_ssh")"
 
     run action.sh --docs-username USER --docs-host HOST --docs-ssh-key KEY --docs-ssh-host-key HOST_KEY --site-path SITE_PATH --github-repository spring-projects/spring-security --httpdocs-path /security/reference
 
     assert_success
     assert_program_args "setup_ssh" "--ssh-private-key-path $HOME/.ssh/spring-projects/spring-security --ssh-private-key KEY --ssh-known-host HOST_KEY"
-    assert_program_args "ssh" "-i $HOME/.ssh/spring-projects/spring-security USER@HOST bash -s -- --github-repository \"spring-projects/spring-security\" --ssh-docs-path \"/opt/www/domains/spring.io/docs/htdocs/security/reference/\""
+    assert_program_args "ssh" "-i $HOME/.ssh/spring-projects/spring-security USER@HOST bash -s -- --github-repository \"spring-projects/spring-security\" --ssh-docs-path \"/opt/www/domains/spring.io/docs/htdocs/security/reference/\"
+-i $HOME/.ssh/spring-projects/spring-security USER@HOST bash -s -- --zip-name \"spring-security-docs.zip\" --ssh-docs-path \"/opt/www/domains/spring.io/docs/htdocs/security/reference/\""
     assert_regex "$(get_program_stdin 'ssh')" 'check_github_repository_owner'
+    assert_regex "$(get_program_stdin 'ssh')" 'zip_docs'
     assert_program_args "rsync_docs" "--ssh-host USER@HOST --ssh-host-path /opt/www/domains/spring.io/docs/htdocs/security/reference/ --local-path SITE_PATH --ssh-private-key-path $HOME/.ssh/spring-projects/spring-security"
     assert_program_args "cleanup_ssh" "--ssh-private-key-path $HOME/.ssh/spring-projects/spring-security"
 
