@@ -141,6 +141,9 @@ usage: action.sh [OPTION]...
     assert_program_args "setup_ssh" "--ssh-private-key-path $HOME/.ssh/spring-projects/spring-security --ssh-private-key KEY --ssh-known-host HOST_KEY"
     assert_program_args "rsync_docs" "--ssh-host USER@HOST --ssh-host-path /opt/www/domains/spring.io/docs/htdocs/spring-security/reference/ --local-path build/site --ssh-private-key-path $HOME/.ssh/spring-projects/spring-security"
     assert_program_args "cleanup_ssh" "--ssh-private-key-path $HOME/.ssh/spring-projects/spring-security"
+    unstub --allow-missing setup_ssh.sh
+    unstub rsync_docs.sh
+    unstub cleanup_ssh.sh
 }
 
 # had a bug using -e instead of -z
@@ -155,6 +158,10 @@ usage: action.sh [OPTION]...
     assert_program_args "setup_ssh" "--ssh-private-key-path $HOME/.ssh/spring-projects/spring-security --ssh-private-key KEY --ssh-known-host HOST_KEY"
     assert_program_args "rsync_docs" "--ssh-host USER@HOST --ssh-host-path /opt/www/domains/spring.io/docs/htdocs/spring-security/reference/ --local-path $BATS_TEMP_DIR --ssh-private-key-path $HOME/.ssh/spring-projects/spring-security"
     assert_program_args "cleanup_ssh" "--ssh-private-key-path $HOME/.ssh/spring-projects/spring-security"
+
+    unstub --allow-missing setup_ssh.sh
+    unstub rsync_docs.sh
+    unstub cleanup_ssh.sh
 }
 
 @test "dry-run=true" {
