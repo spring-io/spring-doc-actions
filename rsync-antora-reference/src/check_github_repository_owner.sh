@@ -46,8 +46,8 @@ __check_github_repository_owner() {
   if ! [[ "$github_repository" =~  .+/.+ ]]; then
     __check_github_repository_owner_usage_error " '--github-repository' must be in the form of <owner>/<name> but got '$github_repository'"
   fi
-  if ! [[ "$ssh_docs_path" =~  /.+/reference ]]; then
-    __check_github_repository_owner_usage_error " '--ssh-docs-path' must start with / and end with /reference but got '$ssh_docs_path'"
+  if ! [[ "$ssh_docs_path" =~  ^/.+ ]]; then
+    __check_github_repository_owner_usage_error " '--ssh-docs-path' must start with and not equal / but got '$ssh_docs_path'"
   fi
 
   local marker_file="${ssh_docs_path}/.github-repository"

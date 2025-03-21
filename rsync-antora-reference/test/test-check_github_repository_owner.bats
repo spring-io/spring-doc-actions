@@ -50,44 +50,23 @@ usage: check_github_repository_owner.sh [OPTION]...
 @test "missing ssh-docs-path" {
     run check_github_repository_owner.sh --github-repository spring-projects/spring-security
     assert [ "$status" -eq 1 ]
-    assert [ "${lines[0]}" = "Error:  '--ssh-docs-path' must start with / and end with /reference but got ''" ]
+    assert [ "${lines[0]}" = "Error:  '--ssh-docs-path' must start with and not equal / but got ''" ]
     assert [ "${lines[1]}" = 'usage: check_github_repository_owner.sh [OPTION]...' ]
 }
 
 @test "invalid ssh-docs-path spring-security/reference" {
     run check_github_repository_owner.sh --github-repository spring-projects/spring-security --ssh-docs-path spring-security/reference
     assert [ "$status" -eq 1 ]
-    assert [ "${lines[0]}" = "Error:  '--ssh-docs-path' must start with / and end with /reference but got 'spring-security/reference'" ]
+    assert [ "${lines[0]}" = "Error:  '--ssh-docs-path' must start with and not equal / but got 'spring-security/reference'" ]
     assert [ "${lines[1]}" = 'usage: check_github_repository_owner.sh [OPTION]...' ]
 }
 
-@test "invalid ssh-docs-path /reference" {
-    run check_github_repository_owner.sh --github-repository spring-projects/spring-security --ssh-docs-path /reference
-    assert [ "$status" -eq 1 ]
-    assert [ "${lines[0]}" = "Error:  '--ssh-docs-path' must start with / and end with /reference but got '/reference'" ]
-    assert [ "${lines[1]}" = 'usage: check_github_repository_owner.sh [OPTION]...' ]
-}
-
-@test "invalid ssh-docs-path //reference" {
-    run check_github_repository_owner.sh --github-repository spring-projects/spring-security --ssh-docs-path //reference
-    assert [ "$status" -eq 1 ]
-    assert [ "${lines[0]}" = "Error:  '--ssh-docs-path' must start with / and end with /reference but got '//reference'" ]
-    assert [ "${lines[1]}" = 'usage: check_github_repository_owner.sh [OPTION]...' ]
-}
-
-
-@test "invalid ssh-docs-path /spring-securityreference" {
-  run check_github_repository_owner.sh --github-repository spring-projects/spring-security  --ssh-docs-path /spring-securityreference
-  assert [ "$status" -eq 1 ]
-  assert [ "${lines[0]}" = "Error:  '--ssh-docs-path' must start with / and end with /reference but got '/spring-securityreference'" ]
-  assert [ "${lines[1]}" = 'usage: check_github_repository_owner.sh [OPTION]...' ]
-}
-
-@test "invalid ssh-docs-path /spring-security" {
-  run check_github_repository_owner.sh --github-repository spring-projects/spring-security  --ssh-docs-path /spring-security
-  assert [ "$status" -eq 1 ]
-  assert [ "${lines[0]}" = "Error:  '--ssh-docs-path' must start with / and end with /reference but got '/spring-security'" ]
-  assert [ "${lines[1]}" = 'usage: check_github_repository_owner.sh [OPTION]...' ]
+# https://github.com/spring-io/spring-doc-actions/issues/20
+@test "Allow httpdocs-path that does not end in /reference" {
+  local dir="${BATS_RESOURCE_TEMP_DIR}/antora"
+  run check_github_repository_owner.sh --github-repository spring-projects/spring-security  --ssh-docs-path "$dir"
+  assert_success
+  assert_output "Owner is verified"
 }
 
 @test "existing project with valid marker file" {
