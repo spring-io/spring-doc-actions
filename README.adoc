@@ -145,3 +145,12 @@ jobs:
 
 The PR will only be created if there is no open PR for the same branch, even if there is a newer version of Antora UI Spring.
 For example, if there is an open PR to update from version `v0.4.11` to `v0.4.12` and `v0.4.13` is released, the workflow won't open a new PR for `v0.4.13` if the previous one is not closed.
+
+== Development
+
+After you clone you can use the following to initialize the submodules
+
+[source,shell]
+----
+ $ git submodule update --init
+----
