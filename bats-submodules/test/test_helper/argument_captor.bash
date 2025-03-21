@@ -25,7 +25,7 @@ capture_program() {
 
 capture_program_args() {
   local path=$(__get_capture_path "$1")
-  echo "echo \${@} > $path"
+  echo "echo \${@} >> $path"
 }
 
 capture_program_stdin() {
