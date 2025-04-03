@@ -77,7 +77,7 @@ usage: zip_docs.sh [OPTION]...
   assert_success
   assert_output "Zipping content in '$dir' to 'spring-security-docs.zip'
 $(pwd)"
-  assert_program_args "zip" "-r spring-security-docs.zip . *"
+  assert_program_args "zip" "-r spring-security-docs.zip -b /tmp . *"
 
   unstub zip
 }

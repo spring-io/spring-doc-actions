@@ -54,7 +54,7 @@ __zip_docs() {
     # The path exists
     cd "$ssh_docs_path"
     echo "Zipping content in '$ssh_docs_path' to '$zip_name'"
-    zip -r "$zip_name" . *
+    zip -r "$zip_name" -b /tmp . *
     cd -
   else
     # The path does not exist so fail
