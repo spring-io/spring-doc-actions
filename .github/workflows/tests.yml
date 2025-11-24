@@ -13,5 +13,7 @@ jobs:
       - uses: actions/checkout@v3
         with:
           submodules: true
-      - name: Run BATS tests
+      - name: Run rsync-antora-reference BATS tests
         run: ./rsync-antora-reference/test/bats/bin/bats ./rsync-antora-reference/test/
+      - name: Run rsync-schema BATS tests
+        run: ./rsync-schema/test/bats/bin/bats ./rsync-schema/test/

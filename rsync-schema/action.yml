@@ -1,0 +1,42 @@
+name: rsync Antora Docs
+description: A GitHub action that syncs Antora reference documentation using rsync with support for syncing a single version. It deploys to the docs server using the github repository in the path.
+branding:
+  icon: 'copy'
+  color: 'green'
+inputs:
+  docs-username:
+    description: The username to connect to the docs server
+    required: true
+  docs-host:
+    description: The host of the docs server
+    required: true
+  docs-ssh-key:
+    description: The ssh key used to connect to the docs-host
+    required: true
+  docs-ssh-host-key:
+    description: The docs ssh host key used to connect to docs-host
+    required: true
+  dry-run:
+    description: Set to false if should perform the sync, else a dry run is performed
+    default: false
+    required: false
+  site-path:
+    description: The path to the schema that should be synced
+    default: build/schema
+    required: false
+  version:
+    description: The schema version being published
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+    - id: publish-docs
+      shell: bash
+      run: |
+        PATH=$PATH:${{ github.action_path }}/src
+        flag_options=''
+        if [ -z "${{ inputs.dry-run }}" ]; then
+          flag_options="${flag_options} --dry-run"
+        fi
+        ${{ github.action_path }}/src/action.sh --docs-username "${{ inputs.docs-username }}" --docs-host "${{ inputs.docs-host }}" --docs-ssh-key "${{ inputs.docs-ssh-key }}" --docs-ssh-host-key "${{ inputs.docs-ssh-host-key }}" --site-path "${{ inputs.site-path }}" --version "${{ inputs.version }}" --github-repository "${{ github.repository }}" $flag_options
