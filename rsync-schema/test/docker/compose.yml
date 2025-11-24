@@ -1,0 +1,25 @@
+---
+version: "2.1"
+services:
+  openssh-server:
+    image: lscr.io/linuxserver/openssh-server:latest
+    container_name: openssh-server
+    hostname: openssh-server #optional
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+      - PUBLIC_KEY="ecdsa-sha2-nistp521 AAAAE2VjZHNhLXNoYTItbmlzdHA1MjEAAAAIbmlzdHA1MjEAAACFBAD+VmfHsc/In4dBGOwKP6KMrHBhqhzXavYmqcJg6eZMUnR+dWIdouNHleuRtljGoumiNwQhQps5HfVEqzcnrpn8LwB0rC7466f81Hl6NDL33yXIj7SF6FckhggmL7cyXHzjSiWp76aAO5K2nIddX6SJSCt3+eUHpVXHwcXqPiS3mHFXDw== root@c14705ad04fb"
+#      - PUBLIC_KEY_FILE=/path/to/file #optional
+#      - PUBLIC_KEY_DIR=/path/to/directory/containing/_only_/pubkeys #optional
+#      - PUBLIC_KEY_URL=https://github.com/username.keys #optional
+#      - SUDO_ACCESS=false #optional
+#      - PASSWORD_ACCESS=false #optional
+#      - USER_PASSWORD=password #optional
+#      - USER_PASSWORD_FILE=/path/to/file #optional
+      - USER_NAME=user
+    volumes:
+      - ./volume/httdocs/:/opt/www/domains/spring.io/docs/htdocs/
+    ports:
+      - 2222:2222
+    restart: unless-stopped
