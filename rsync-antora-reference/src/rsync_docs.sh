@@ -89,7 +89,7 @@ __rsync_docs() {
   fi
   rsync_opts="$rsync_opts --exclude /.github-repository --exclude /.cache --exclude /.cache/* "
   if [ -n "$build_ref_name" ]; then
-    rsync_opts="-c $rsync_opts$(find $local_path -mindepth 1 -maxdepth 1 \! -name 404.html \! -name '.*' -type f -printf ' --include /%P')"
+    rsync_opts="-c $rsync_opts$(find $local_path -mindepth 1 -maxdepth 1 \! -name 404.html \! -name site-manifest.json \! -name '.*' -type f -printf ' --include /%P')"
     rsync_opts="$rsync_opts$(find $local_path -mindepth 1 -maxdepth 1 -type d \! -name _ -printf ' --include /%P --include /%P/**') --exclude **"
   fi
   # Disable filename expansion (globbing)

@@ -89,6 +89,18 @@ usage: rsync_docs.sh [OPTION]...
     unstub rsync
 }
 
+@test "when build_ref_name then site-manifest.json not included" {
+    local dir="${BATS_RESOURCE_TEMP_DIR}/has-site-manifest"
+    stub rsync "$(capture_program_args "rsync")"
+
+    run rsync_docs.sh --ssh-host HOST --build-ref-name main --ssh-host-path HOST_PATH --ssh-private-key-path PRIVATE_KEY_PATH --local-path "$dir"
+
+    local rsync_args=$(get_program_args "rsync")
+    assert_success
+    refute_regex "$rsync_args" " --include /site-manifest.json"
+    unstub rsync
+}
+
 @test "when rsync fails script returns non-zero" {
     local dir="${BATS_RESOURCE_TEMP_DIR}/no-htaccess"
     stub rsync "exit 1"
